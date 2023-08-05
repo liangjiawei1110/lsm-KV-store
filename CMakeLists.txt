@@ -12,8 +12,9 @@ include_directories(include)
 # include_directories(./third-party/spdlog/include)
 # link_directories(./third-party/spdlog/build)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)  
-set(CAMAKE_BUILD_TYPE Debug)
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
+# set(CAMAKE_BUILD_TYPE Debug)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
 
 add_executable(Lsm-Kv-Store main.cpp db/utils_for_file_operation.cpp db/utils_for_time_operation.cpp db/utils_for_json_operation.cpp)
 

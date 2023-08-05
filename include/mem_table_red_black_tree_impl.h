@@ -53,7 +53,9 @@ class RedBlackTreeMemTable : public MemTable {
     long Size() const {
         return table->size();
     }
-
+    ~RedBlackTreeMemTable() {
+        delete table;
+    }
   private:
     std::map<std::string, std::shared_ptr<Command>> *table;
     std::map<std::string, std::shared_ptr<Command>>::iterator it;
