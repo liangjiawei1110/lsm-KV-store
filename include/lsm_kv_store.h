@@ -46,7 +46,7 @@ class LsmKvStore : public KvStore {
             // mem_table_ = std::shared_ptr<MT>(new RedBlackTreeMT());
             mem_table_ = std::shared_ptr<MT>(new MT());
             if (!IsSolidDirectory(data_dir_path_)) {
-                spdlog::warn("[LsmKvStore][constructor] dataDir: {} is invalid", this->data_dir_path_);
+                //spdlog::warn("[LsmKvStore][constructor] dataDir: {} is invalid", this->data_dir_path_);
                 // std::string will cast to std::exception
                 throw data_dir_path_ + " not valid";
             }
@@ -57,19 +57,19 @@ class LsmKvStore : public KvStore {
                 std::string file_path = data_dir_path_ + "/" + file_name;
                 // it's a SSTable file, it's like 142153253253.table
                 if (EndsWith(file_name, TABLE_SUFFIX)) {
-                    spdlog::info("[LsmKvStore][constructor] init ssTable from file: {}", file_name);
+                    //spdlog::info("[LsmKvStore][constructor] init ssTable from file: {}", file_name);
                     long time = getTimeFromSSTableName(file_name);
                     std::shared_ptr<SsTable> ss_table = SsTable::InitFromSSD(file_path);
                     ss_table_map.insert(std::make_pair(time, ss_table));
                     // WAL_TMP: restore from walTmp file, and such file commonly derive from ssTable that fails when being persisted
                     // WAL: restore from a pre-exist file, can keep on using it
                 } else if (file_name == WAL || file_name == WAL_TMP) {
-                    spdlog::info("[LsmKvStore][constructor] restore commands from file: {}", file_name);
+                    //spdlog::info("[LsmKvStore][constructor] restore commands from file: {}", file_name);
                     std::fstream *tmp_fstream_ptr = new std::fstream;
                     OpenFileAndCreateOneWhenNotExist(tmp_fstream_ptr, file_path);
                     // tmpFstream->open(fileWithPath, std::ios::in | std::ios::out | std::ios::binary);
                     if (!tmp_fstream_ptr->is_open()) {
-                        spdlog::info("[LsmKvStore][constructor] fail to open file: {}", file_name);
+                        //spdlog::info("[LsmKvStore][constructor] fail to open file: {}", file_name);
                         throw "fail to open file";
                     }
                     // such wal file can continue to work
@@ -90,7 +90,7 @@ class LsmKvStore : public KvStore {
                 ss_tables_->push_back(it->second);
             }
         } catch (std::exception &error) {
-            spdlog::error("[LsmKvStore][constructor] error: {}", error.what());
+            //spdlog::error("[LsmKvStore][constructor] error: {}", error.what());
             throw error;
         }
     }
@@ -101,7 +101,7 @@ class LsmKvStore : public KvStore {
             ExecuteCommand(command);
         } catch (std::exception &error) {
             // the toppest function, so won't throw again
-            spdlog::error("[LsmKvStore][Set] error: {}", error.what());
+            //spdlog::error("[LsmKvStore][Set] error: {}", error.what());
         }
     }
 
@@ -111,7 +111,7 @@ class LsmKvStore : public KvStore {
             ExecuteCommand(command);
         } catch (std::exception &error) {
             // the toppest function, so won't throw again
-            spdlog::error("[LsmKvStore][Rm] error: {}", error.what());
+            //spdlog::error("[LsmKvStore][Rm] error: {}", error.what());
         }
     }
 
@@ -137,7 +137,7 @@ class LsmKvStore : public KvStore {
             return "";
         else if (command->GetType() == SetType) {
             std::string value = command->GetValue();
-            spdlog::info("[LsmKvStore][Get] get {} for key: {}", value, key);
+            //spdlog::info("[LsmKvStore][Get] get {} for key: {}", value, key);
             return value;
         } else if (command->GetType() == RemoveType) {
             return "";
@@ -203,14 +203,14 @@ class LsmKvStore : public KvStore {
         std::string wal_tmp_file_path = data_dir_path_ + "/" + WAL_TMP;
         // If there is wal_tmp file exsiting, it is left before, just delete it.
         if (!DeleteFile(wal_tmp_file_path)) {
-            spdlog::error("[LsmKvStore][RenameWALToWALTMP] fail to delete walTmp: {}", wal_tmp_file_path);
+            //spdlog::error("[LsmKvStore][RenameWALToWALTMP] fail to delete walTmp: {}", wal_tmp_file_path);
             throw "fail to delete WAL_TMP";
         }
         if (std::rename(this->wal_file_path_.c_str(), wal_tmp_file_path.c_str())) {
-            spdlog::error("[LsmKvStore][RenameWALToWALTMP] fail to rename walTmp: {} to {}", wal_file_path_, wal_tmp_file_path);
+            //spdlog::error("[LsmKvStore][RenameWALToWALTMP] fail to rename walTmp: {} to {}", wal_file_path_, wal_tmp_file_path);
             throw "fail to rename WAL to WAL_TMP";
         }
-        spdlog::info("[LsmKvStore][RenameWALToWALTMP] rename walTmp: {} to {}", wal_file_path_, wal_tmp_file_path);
+        //spdlog::info("[LsmKvStore][RenameWALToWALTMP] rename walTmp: {} to {}", wal_file_path_, wal_tmp_file_path);
         // create a new wal file
         OpenFileAndCreateOneWhenNotExist(wal_file_stream_ptr_, wal_file_path_);
     }
@@ -252,7 +252,7 @@ class LsmKvStore : public KvStore {
                 PersistCommands();
             }
         } catch (std::exception &error) {
-            spdlog::error("[LsmKvStore][ExecuteCommand] error: {}", error.what());
+            //spdlog::error("[LsmKvStore][ExecuteCommand] error: {}", error.what());
             throw;
         }
     }
@@ -274,7 +274,7 @@ class LsmKvStore : public KvStore {
             // delete wal_tmp
             DeleteWalTmp();
         } catch (std::exception &error) {
-            spdlog::error("[LsmKvStore][flushSSTableAndWal] error: {}", error.what());
+            //spdlog::error("[LsmKvStore][flushSSTableAndWal] error: {}", error.what());
             throw;
         }
     }

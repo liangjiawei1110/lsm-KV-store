@@ -40,3 +40,4 @@ build/
 out/
 data/
 
+.cache

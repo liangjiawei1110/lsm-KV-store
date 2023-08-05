@@ -9,7 +9,7 @@
  * Copyright (c) 2022 by BohanWu 819186192@qq.com, All Rights Reserved.
  */
 
-#include "spdlog/spdlog.h"
+// #include "//spdlog///spdlog.h"
 #include <dirent.h>
 #include <filesystem>
 #include <fstream>
@@ -27,11 +27,11 @@ bool IsSolidDirectory(const std::string dir_path) {
     // check if dir_name is a valid dir
     struct stat s;
     if (lstat(dir_path.c_str(), &s) < 0) {
-        spdlog::error("[isSolidDirectory] Failed to lstat {}: {}", dir_path, strerror(errno));
+        //spdlog::error("[isSolidDirectory] Failed to lstat {}: {}", dir_path, strerror(errno));
         return false;
     }
     if (!S_ISDIR(s.st_mode)) {
-        spdlog::warn("[isSolidDIrectory] {}(dir_path) is not a directory");
+        //spdlog::warn("[isSolidDIrectory] {}(dir_path) is not a directory");
         return false;
     }
     return true;
@@ -50,9 +50,9 @@ std::vector<std::string> GetFilenamesInDirectory(const std::string dir_path) {
         if (filename != "." && filename != "..")
             filenames.push_back(std::move(filename));
     }
-    spdlog::info("[getFilenamesInDirectory] get {0} files in {1}, namely: ", filenames.size(), dir_path);
+    //spdlog::info("[getFilenamesInDirectory] get {0} files in {1}, namely: ", filenames.size(), dir_path);
     for (auto &filename : filenames) {
-        spdlog::info("[getFilenamesInDirectory] get {}", filename);
+        //spdlog::info("[getFilenamesInDirectory] get {}", filename);
     }
     return filenames;
 }
@@ -122,7 +122,7 @@ bool DeleteFile(std::string file_path) {
     if (IsFileExisting(file_path)) {
         // remove: if remove file successfully, return 0
         if (std::remove(file_path.c_str())) {
-            spdlog::error("[DeleteFile] fail to delete file: {}", file_path);
+            //spdlog::error("[DeleteFile] fail to delete file: {}", file_path);
             return false;
         }
     }

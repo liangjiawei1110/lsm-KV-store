@@ -8,11 +8,10 @@
  *
  * Copyright (c) 2022 by BohanWu 819186192@qq.com, All Rights Reserved.
  */
-#include "lsm_kv_store.h"
-#include "spdlog/spdlog.h"
-#include "utils_for_time_operation.h"
+#include "include/json.h"
+#include "include/utils_for_time_operation.h"
 #include <iostream>
-#include <nlohmann/json.hpp>
+#include "include/lsm_kv_store.h"
 using json = nlohmann::json;
 
 int main(int, char **) {
@@ -21,8 +20,17 @@ int main(int, char **) {
     // std::cout << "in ./src/utils_for_time_operation.h, getSystemTimeInMills:" << getSystemTimeInMills()
     //           << ", j['Hello'] = " << j["hello"] << std::endl;
     // spdlog::info("Welcome to spdlog!!!!!");
-    // auto store = std::shared_ptr<LsmKvStore>(new LsmKvStore("./data", 2, 1));
-    // store->Set("key1", "300");
+     
+    //create a new instance of kvstore
+    auto store = std::shared_ptr<LsmKvStore<SkipListMemTable>>(new LsmKvStore<SkipListMemTable>("./data", 2, 1));
+     std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+    for(int i = 0; i < 1000; i++) {
+        store->Set(std::to_string(i), std::to_string(i));
+    }
+    std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+    std::cout << "insert 10000 kv into store and get the total time: " << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << " microseconds" << std::endl;
+
+
     // spdlog::info("[Test-Result]: try to get key1's value: {}", store->Get("key1"));
     // spdlog::info("[Test-Result]: try to get key2's value: {}", store->Get("key2"));
 }
